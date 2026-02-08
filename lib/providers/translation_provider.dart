@@ -8,9 +8,9 @@ import '../services/translation_service.dart';
 import '../services/tts_service.dart';
 import '../services/audio_device_service.dart';
 
-final speechServiceProvider = Provider((ref) => SpeechService());
+final speechServiceProvider = Provider((ref) => SpeechService(ref));
 final translationServiceProvider = Provider((ref) => TranslationService());
-final ttsServiceProvider = Provider((ref) => TtsService());
+final ttsServiceProvider = Provider((ref) => TtsService(ref));
 final audioDeviceServiceProvider = Provider((ref) => AudioDeviceService());
 
 class TranslationState {
@@ -78,39 +78,59 @@ class TranslationNotifier extends StateNotifier<TranslationState> {
   }
 
   String _lastWords = '';
+  bool _isContinuousMode = false;
 
   void toggleListening() {
     if (state.isListening) {
       _speechService.stop();
       state = state.copyWith(isListening: false, soundLevel: 0);
+      _isContinuousMode = false;
     } else {
-      state = state.copyWith(isListening: true);
-      _speechService.startListening(
-        onSoundLevel: (level) {
-          state = state.copyWith(soundLevel: level);
-        },
-        onResult: (words, isFinal) async {
-          if (!isFinal || words.isEmpty) return;
-          if (words == _lastWords) return;
-          
-          _lastWords = words;
-
-          final translated = await _translationService.translate(words);
-          final newItem = TranslationItem(
-            id: _uuid.v4(),
-            originalText: words,
-            translatedText: translated,
-            timestamp: DateTime.now(),
-          );
-          
-          state = state.copyWith(
-            items: [...state.items, newItem],
-          );
-          
-          await _ttsService.speak(translated);
-        },
-      );
+      _isContinuousMode = true;
+      _startListeningInternal();
     }
+  }
+
+  void startHolding() {
+    if (state.isListening) return;
+    _isContinuousMode = false;
+    _startListeningInternal();
+  }
+
+  void stopHolding() {
+    if (state.isListening && !_isContinuousMode) {
+      _speechService.stop();
+      state = state.copyWith(isListening: false, soundLevel: 0);
+    }
+  }
+
+  void _startListeningInternal() {
+    state = state.copyWith(isListening: true);
+    _speechService.startListening(
+      onSoundLevel: (level) {
+        state = state.copyWith(soundLevel: level);
+      },
+      onResult: (words, isFinal) async {
+        if (!isFinal || words.isEmpty) return;
+        if (words == _lastWords) return;
+        
+        _lastWords = words;
+
+        final translated = await _translationService.translate(words);
+        final newItem = TranslationItem(
+          id: _uuid.v4(),
+          originalText: words,
+          translatedText: translated,
+          timestamp: DateTime.now(),
+        );
+        
+        state = state.copyWith(
+          items: [...state.items, newItem],
+        );
+        
+        await _ttsService.speak(translated);
+      },
+    );
   }
 
   void clearHistory() {
