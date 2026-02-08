@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; background: #2C2C2E; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        button { 
+            background: #007AFF; color: white; border: none; padding: 15px 30px; 
+            border-radius: 25px; font-weight: bold; font-size: 16px; width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <button id="btn" onclick="startSpeech()">タップして音声認識を有効にする</button>
+    <script>
+        let recognition;
+        try {
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'ja-JP';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            recognition.onresult = (event) => {
+                const last = event.results.length - 1;
+                const text = event.results[last][0].transcript;
+                if (text && window.FlutterSpeech) {
+                    window.FlutterSpeech.postMessage(text);
+                }
+            };
+            recognition.onerror = (event) => {
+                console.log('STT Error:', event.error);
+                if (window.isListening) setTimeout(() => { try { recognition.start(); } catch(e){} }, 1000);
+            };
+            recognition.onend = () => {
+                if (window.isListening) setTimeout(() => { try { recognition.start(); } catch(e){} }, 100);
+            };
+        } catch (e) {
+            console.error('STT Init Error:', e);
+        }
+
+        window.isListening = false;
+        window.startSpeech = () => {
+            document.getElementById('btn').style.background = '#FF3B30';
+            document.getElementById('btn').innerText = '認識エンジン稼働中...';
+            window.isListening = true;
+            try { recognition.start(); } catch(e){ console.error(e); }
+        };
+        window.stopSpeech = () => {
+            document.getElementById('btn').style.background = '#007AFF';
+            document.getElementById('btn').innerText = 'タップして再開';
+            window.isListening = false;
+            try { recognition.stop(); } catch(e){ console.error(e); }
+        };
+    </script>
+</body>
+</html>
