@@ -53,124 +53,251 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (level < 0) level = 0;
     final double visualWidthFactor = (level / 10.0).clamp(0.0, 1.0);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF121212),
-      appBar: AppBar(
-        title: Row(
-          children: [
-            const Text('おうち留学', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: state.isBluetoothConnected ? Colors.blueAccent.withOpacity(0.2) : Colors.white10,
-                borderRadius: BorderRadius.circular(12),
+        return Scaffold(
+
+          backgroundColor: const Color(0xFF121212),
+
+          appBar: AppBar(
+
+            title: const Text('おうち留学', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+
+            backgroundColor: Colors.black,
+
+            elevation: 0,
+
+            actions: [
+
+              IconButton(
+
+                icon: const Icon(Icons.delete_outline, color: Colors.white70),
+
+                onPressed: () => notifier.clearHistory(),
+
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    state.isBluetoothConnected ? Icons.bluetooth_connected : Icons.bluetooth_disabled,
-                    size: 16,
-                    color: state.isBluetoothConnected ? Colors.blueAccent : Colors.white24,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    state.isBluetoothConnected ? 'Bluetooth接続中' : 'Bluetooth未接続',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: state.isBluetoothConnected ? Colors.blueAccent : Colors.white24,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+
+              IconButton(
+
+                icon: const Icon(Icons.settings, color: Colors.white70),
+
+                onPressed: () {
+
+                  Navigator.of(context).push(
+
+                    MaterialPageRoute(builder: (context) => const SettingsScreen()),
+
+                  );
+
+                },
+
               ),
-            ),
-            const SizedBox(width: 8), // Spacing between BT and STT status
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: (() {
-                  switch (settingsState.currentSttMode) {
-                    case 'cloud': return Colors.green.withOpacity(0.2);
-                    case 'onDevice': return Colors.orange.withOpacity(0.2);
-                    case 'error': return Colors.red.withOpacity(0.2);
-                    default: return Colors.white10;
-                  }
-                })(),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    (() {
-                      switch (settingsState.currentSttMode) {
-                        case 'cloud': return Icons.cloud;
-                        case 'onDevice': return Icons.phonelink;
-                        case 'error': return Icons.error_outline;
-                        default: return Icons.help_outline;
-                      }
-                    })(),
-                    size: 16,
-                    color: (() {
-                      switch (settingsState.currentSttMode) {
-                        case 'cloud': return Colors.greenAccent;
-                        case 'onDevice': return Colors.orangeAccent;
-                        case 'error': return Colors.redAccent;
-                        default: return Colors.white24;
-                      }
-                    })(),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    (() {
-                      switch (settingsState.currentSttMode) {
-                        case 'cloud': return 'クラウド認識';
-                        case 'onDevice': return '本体認識';
-                        case 'error': return 'エラー';
-                        default: return '待機中';
-                      }
-                    })(),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: (() {
-                        switch (settingsState.currentSttMode) {
-                          case 'cloud': return Colors.greenAccent;
-                          case 'onDevice': return Colors.orangeAccent;
-                          case 'error': return Colors.redAccent;
-                          default: return Colors.white24;
-                        }
-                      })(),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.black,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_outline, color: Colors.white70),
-            onPressed: () => notifier.clearHistory(),
+
+            ],
+
           ),
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white70),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // 巨大な音量バー（これでマイクの反応を100%確認できます）
-          if (state.isListening)
+
+          body: Column(
+
+            children: [
+
+              // ステータス表示行
+
+              Container(
+
+                color: Colors.black,
+
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+
+                child: Row(
+
+                  children: [
+
+                    Container(
+
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+
+                      decoration: BoxDecoration(
+
+                        color: state.isBluetoothConnected ? Colors.blueAccent.withOpacity(0.2) : Colors.white10,
+
+                        borderRadius: BorderRadius.circular(12),
+
+                      ),
+
+                      child: Row(
+
+                        mainAxisSize: MainAxisSize.min,
+
+                        children: [
+
+                          Icon(
+
+                            state.isBluetoothConnected ? Icons.bluetooth_connected : Icons.bluetooth_disabled,
+
+                            size: 14,
+
+                            color: state.isBluetoothConnected ? Colors.blueAccent : Colors.white24,
+
+                          ),
+
+                          const SizedBox(width: 4),
+
+                          Text(
+
+                            state.isBluetoothConnected ? 'Bluetooth接続中' : 'Bluetooth未接続',
+
+                            style: TextStyle(
+
+                              fontSize: 11,
+
+                              color: state.isBluetoothConnected ? Colors.blueAccent : Colors.white24,
+
+                              fontWeight: FontWeight.w500,
+
+                            ),
+
+                          ),
+
+                        ],
+
+                      ),
+
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    Container(
+
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+
+                      decoration: BoxDecoration(
+
+                        color: (() {
+
+                          switch (settingsState.currentSttMode) {
+
+                            case 'cloud': return Colors.green.withOpacity(0.2);
+
+                            case 'onDevice': return Colors.orange.withOpacity(0.2);
+
+                            case 'error': return Colors.red.withOpacity(0.2);
+
+                            default: return Colors.white10;
+
+                          }
+
+                        })(),
+
+                        borderRadius: BorderRadius.circular(12),
+
+                      ),
+
+                      child: Row(
+
+                        mainAxisSize: MainAxisSize.min,
+
+                        children: [
+
+                          Icon(
+
+                            (() {
+
+                              switch (settingsState.currentSttMode) {
+
+                                case 'cloud': return Icons.cloud;
+
+                                case 'onDevice': return Icons.phonelink;
+
+                                case 'error': return Icons.error_outline;
+
+                                default: return Icons.help_outline;
+
+                              }
+
+                            })(),
+
+                            size: 14,
+
+                            color: (() {
+
+                              switch (settingsState.currentSttMode) {
+
+                                case 'cloud': return Colors.greenAccent;
+
+                                case 'onDevice': return Colors.orangeAccent;
+
+                                case 'error': return Colors.redAccent;
+
+                                default: return Colors.white24;
+
+                              }
+
+                            })(),
+
+                          ),
+
+                          const SizedBox(width: 4),
+
+                          Text(
+
+                            (() {
+
+                              switch (settingsState.currentSttMode) {
+
+                                case 'cloud': return 'クラウド認識';
+
+                                case 'onDevice': return '本体認識';
+
+                                case 'error': return 'エラー';
+
+                                default: return '待機中';
+
+                              }
+
+                            })(),
+
+                            style: TextStyle(
+
+                              fontSize: 11,
+
+                              color: (() {
+
+                                switch (settingsState.currentSttMode) {
+
+                                  case 'cloud': return Colors.greenAccent;
+
+                                  case 'onDevice': return Colors.orangeAccent;
+
+                                  case 'error': return Colors.redAccent;
+
+                                  default: return Colors.white24;
+
+                                }
+
+                              })(),
+
+                              fontWeight: FontWeight.w500,
+
+                            ),
+
+                          ),
+
+                        ],
+
+                      ),
+
+                    ),
+
+                  ],
+
+                            ),
+
+                          ),
+
+                          // 巨大な音量バー（これでマイクの反応を100%確認できます）
+
+                          if (state.isListening)
+
+                
             Container(
               height: 15,
               width: double.infinity,
@@ -192,7 +319,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const Icon(Icons.tv, size: 80, color: Colors.white10),
                         const SizedBox(height: 32),
                         const Text(
-                          'テレビの日本語を待機中...',
+                          '日本語を待機中...',
                           style: TextStyle(color: Colors.white54, fontSize: 16),
                         ),
                       ],
@@ -326,7 +453,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    state.isListening ? 'ストップ' : 'おうち留学を開始',
+                    state.isListening ? '停止' : '開始',
                     style: TextStyle(
                       color: state.isListening ? Colors.redAccent : Colors.blueAccent,
                       fontWeight: FontWeight.bold,
