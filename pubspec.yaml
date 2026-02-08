@@ -19,9 +19,6 @@ dependencies:
   audio_session: ^0.2.2
   shared_preferences: ^2.5.3
   connectivity_plus: ^7.0.0
-  record: ^6.2.0
-  path_provider: ^2.1.5
-  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
