@@ -45,7 +45,7 @@ class SpeechService {
   }
 
   void startListening({
-    required Function(String words) onResult,
+    required Function(String words, bool isFinal) onResult,
     required Function(double level) onSoundLevel,
   }) async {
     _shouldBeListening = true;
@@ -64,7 +64,7 @@ class SpeechService {
     await _startListeningInternal();
   }
 
-  Function(String)? _onResultCallback;
+  Function(String, bool)? _onResultCallback;
   Function(double)? _onSoundLevelCallback;
 
   Future<void> _startListeningInternal() async {
@@ -79,7 +79,7 @@ class SpeechService {
       await _speech.listen(
         onResult: (result) {
           if (result.recognizedWords.isNotEmpty && _onResultCallback != null) {
-            _onResultCallback!(result.recognizedWords);
+            _onResultCallback!(result.recognizedWords, result.finalResult);
           }
         },
         onSoundLevelChange: (level) {

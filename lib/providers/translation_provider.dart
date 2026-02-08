@@ -72,11 +72,10 @@ class TranslationNotifier extends StateNotifier<TranslationState> {
         onSoundLevel: (level) {
           state = state.copyWith(soundLevel: level);
         },
-        onResult: (words) async {
-          if (words == _lastWords || words.isEmpty) return;
+        onResult: (words, isFinal) async {
+          if (!isFinal || words.isEmpty) return;
+          if (words == _lastWords) return;
           
-          // アルファベットのみ（ローマ字）なら、一応ログに出すが
-          // 翻訳に投げれば修正されるので、そのまま続行
           _lastWords = words;
 
           final translated = await _translationService.translate(words);
