@@ -6,22 +6,26 @@ import '../models/translation_item.dart';
 import '../services/speech_service.dart';
 import '../services/translation_service.dart';
 import '../services/tts_service.dart';
+import '../services/audio_device_service.dart';
 
 final speechServiceProvider = Provider((ref) => SpeechService());
 final translationServiceProvider = Provider((ref) => TranslationService());
 final ttsServiceProvider = Provider((ref) => TtsService());
+final audioDeviceServiceProvider = Provider((ref) => AudioDeviceService());
 
 class TranslationState {
   final List<TranslationItem> items;
   final bool isListening;
   final bool isServiceInitialized;
   final double soundLevel;
+  final bool isBluetoothConnected;
 
   TranslationState({
     this.items = const [],
     this.isListening = false,
     this.isServiceInitialized = false,
     this.soundLevel = 0,
+    this.isBluetoothConnected = false,
   });
 
   TranslationState copyWith({
@@ -29,12 +33,14 @@ class TranslationState {
     bool? isListening,
     bool? isServiceInitialized,
     double? soundLevel,
+    bool? isBluetoothConnected,
   }) {
     return TranslationState(
       items: items ?? this.items,
       isListening: isListening ?? this.isListening,
       isServiceInitialized: isServiceInitialized ?? this.isServiceInitialized,
       soundLevel: soundLevel ?? this.soundLevel,
+      isBluetoothConnected: isBluetoothConnected ?? this.isBluetoothConnected,
     );
   }
 }
@@ -43,12 +49,14 @@ class TranslationNotifier extends StateNotifier<TranslationState> {
   final SpeechService _speechService;
   final TranslationService _translationService;
   final TtsService _ttsService;
+  final AudioDeviceService _audioDeviceService;
   final _uuid = const Uuid();
 
   TranslationNotifier(
     this._speechService,
     this._translationService,
     this._ttsService,
+    this._audioDeviceService,
   ) : super(TranslationState());
 
   Future<void> init() async {
@@ -57,7 +65,16 @@ class TranslationNotifier extends StateNotifier<TranslationState> {
 
     await _ttsService.init();
     final ok = await _speechService.init();
-    state = state.copyWith(isServiceInitialized: ok);
+    
+    await _audioDeviceService.init();
+    state = state.copyWith(
+      isServiceInitialized: ok,
+      isBluetoothConnected: _audioDeviceService.isBluetoothConnected,
+    );
+
+    _audioDeviceService.bluetoothStream.listen((isConnected) {
+      state = state.copyWith(isBluetoothConnected: isConnected);
+    });
   }
 
   String _lastWords = '';
@@ -106,5 +123,6 @@ final translationProvider = StateNotifierProvider<TranslationNotifier, Translati
     ref.watch(speechServiceProvider),
     ref.watch(translationServiceProvider),
     ref.watch(ttsServiceProvider),
+    ref.watch(audioDeviceServiceProvider),
   );
 });

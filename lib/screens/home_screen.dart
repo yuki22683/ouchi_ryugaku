@@ -53,7 +53,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        title: const Text('おうち留学', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Row(
+          children: [
+            const Text('おうち留学', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: state.isBluetoothConnected ? Colors.blueAccent.withOpacity(0.2) : Colors.white10,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    state.isBluetoothConnected ? Icons.bluetooth_connected : Icons.bluetooth_disabled,
+                    size: 16,
+                    color: state.isBluetoothConnected ? Colors.blueAccent : Colors.white24,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    state.isBluetoothConnected ? 'Bluetooth接続中' : 'Bluetooth未接続',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: state.isBluetoothConnected ? Colors.blueAccent : Colors.white24,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Colors.black,
         elevation: 0,
         actions: [
