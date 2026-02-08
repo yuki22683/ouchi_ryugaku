@@ -88,7 +88,7 @@ class TranslationNotifier extends StateNotifier<TranslationState> {
           );
           
           state = state.copyWith(
-            items: [newItem, ...state.items],
+            items: [...state.items, newItem],
           );
           
           await _ttsService.speak(translated);

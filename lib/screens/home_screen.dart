@@ -10,6 +10,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -17,7 +19,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.listen(translationProvider.select((s) => s.items.length), (previous, next) {
+      if (next > (previous ?? 0)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+      }
+    });
+
     final state = ref.watch(translationProvider);
     final notifier = ref.read(translationProvider.notifier);
 
@@ -71,6 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   )
                 : ListView.builder(
+                    controller: _scrollController,
                     padding: const EdgeInsets.all(16),
                     itemCount: state.items.length,
                     itemBuilder: (context, index) {
