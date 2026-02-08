@@ -127,9 +127,11 @@ class SpeechService {
             localeId: 'ja-JP',
             listenFor: Duration(seconds: settings.listenForSeconds),
             pauseFor: Duration(seconds: settings.pauseForSeconds),
-            partialResults: settings.enablePartialResults,
-            listenMode: currentListenMode,
-            onDevice: false, // Explicitly cloud
+            listenOptions: stt.SpeechListenOptions(
+              partialResults: settings.enablePartialResults,
+              listenMode: currentListenMode,
+              onDevice: false, // Explicitly cloud
+            ),
           );
           success = true;
           modeUsed = 'cloud';
@@ -154,9 +156,11 @@ class SpeechService {
             localeId: 'ja-JP',
             listenFor: Duration(seconds: settings.listenForSeconds),
             pauseFor: Duration(seconds: settings.pauseForSeconds),
-            partialResults: settings.enablePartialResults,
-            listenMode: currentListenMode,
-            onDevice: true, // Explicitly onDevice
+            listenOptions: stt.SpeechListenOptions(
+              partialResults: settings.enablePartialResults,
+              listenMode: currentListenMode,
+              onDevice: true, // Explicitly onDevice
+            ),
           );
           success = true;
           modeUsed = 'onDevice';

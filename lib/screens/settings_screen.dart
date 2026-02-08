@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/settings_provider.dart';
 import '../providers/translation_provider.dart'; // For ttsServiceProvider
-import '../services/tts_service.dart';
-import 'dart:io' show Platform; // For checking platform to filter voices
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -310,7 +308,7 @@ class SettingsScreen extends ConsumerWidget {
                   value: voiceName,
                   child: Text('$voiceName ($voiceLocale)', style: const TextStyle(color: Colors.white)),
                 );
-              }).toList(),
+              }),
             ],
             onChanged: (value) {
               if (value == null) {

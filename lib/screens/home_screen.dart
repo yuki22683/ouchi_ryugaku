@@ -116,11 +116,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
 
                       decoration: BoxDecoration(
-
-                        color: state.isBluetoothConnected ? Colors.blueAccent.withOpacity(0.2) : Colors.white10,
-
+                        color: state.isBluetoothConnected ? Colors.blueAccent.withValues(alpha: 0.2) : Colors.white10,
                         borderRadius: BorderRadius.circular(12),
-
                       ),
 
                       child: Row(
@@ -175,11 +172,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                           switch (settingsState.currentSttMode) {
 
-                            case 'cloud': return Colors.green.withOpacity(0.2);
+                            case 'cloud': return Colors.green.withValues(alpha: 0.2);
 
-                            case 'onDevice': return Colors.orange.withOpacity(0.2);
+                            case 'onDevice': return Colors.orange.withValues(alpha: 0.2);
 
-                            case 'error': return Colors.red.withOpacity(0.2);
+                            case 'error': return Colors.red.withValues(alpha: 0.2);
 
                             default: return Colors.white10;
 
@@ -301,7 +298,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Container(
               height: 15,
               width: double.infinity,
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               alignment: Alignment.centerLeft,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 100),
@@ -312,13 +309,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           Expanded(
             child: state.items.isEmpty
-                ? Center(
+                ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.tv, size: 80, color: Colors.white10),
-                        const SizedBox(height: 32),
-                        const Text(
+                        Icon(Icons.tv, size: 80, color: Colors.white10),
+                        SizedBox(height: 32),
+                        Text(
                           '日本語を待機中...',
                           style: TextStyle(color: Colors.white54, fontSize: 16),
                         ),
@@ -338,9 +335,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           color: const Color(0xFF1E1E1E),
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(color: Colors.white10),
-                          boxShadow: [
+                            boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -396,7 +393,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blueAccent.withOpacity(state.isListening ? 0.1 : 0),
+                  color: Colors.blueAccent.withValues(alpha: state.isListening ? 0.1 : 0),
                   blurRadius: 40,
                   spreadRadius: 10,
                 ),
@@ -423,7 +420,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               height: 80 * value,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: (state.isListening ? Colors.redAccent : Colors.blueAccent).withOpacity((1.4 - value).clamp(0.0, 1.0)),
+                                color: (state.isListening ? Colors.redAccent : Colors.blueAccent).withValues(alpha:(1.4 - value).clamp(0.0, 1.0)),
                               ),
                             );
                           },
@@ -437,7 +434,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: (state.isListening ? Colors.redAccent : Colors.blueAccent).withOpacity(0.5),
+                              color: (state.isListening ? Colors.redAccent : Colors.blueAccent).withValues(alpha:0.5),
                               blurRadius: state.isListening ? 20 : 0,
                               spreadRadius: state.isListening ? 5 : 0,
                             ),
@@ -463,7 +460,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(height: 4),
                   Text(
                     state.isListening ? '常時聞き取り中' : 'タップで開始 / 長押しで話す',
-                    style: TextStyle(color: Colors.white24, fontSize: 10),
+                    style: const TextStyle(color: Colors.white24, fontSize: 10),
                   ),
                 ],
               ),
